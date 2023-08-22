@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "pretty": true,
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "strict": true,
+    "noEmit": false,
+    "outDir": "dist",
+    "target": "es2019",
+    "types": ["node", "jest"]
+  },
+  "include": ["src"],
+  "exclude": ["**/*.spec.*", "**/*.test.*", "**/tests/*", "**/*.mock.*", "**/mocks/*"]
+}
