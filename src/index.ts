@@ -1,3 +1,3 @@
-export { Logger } from "./class";
-export { logSpy } from "./log-spy";
-export { logger } from "./logger";
+export { Logger } from "./logger-class";
+export { logger } from "./logger-function";
+export { logSpy } from "./logger-spy";

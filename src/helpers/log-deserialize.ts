@@ -12,7 +12,7 @@ type DeserializeOptions = {
  * Format data for log display in browser console or terminal, and optionally expand all JSON strings.
  * @param data the raw data
  * @param params.expanded set true to deeply parse JSON strings in to objects before writing to output
- * @param params.testing set true to prevent the output being wrapped with `inspect` for debug output
+ * @param params.testing set true to prevent the output being wrapped with `inspect` and colour output
  * @returns formatted data
  */
 export const deserialize = (data: LogData, params?: DeserializeOptions): LogData => {

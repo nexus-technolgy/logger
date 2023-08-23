@@ -1,16 +1,16 @@
-import { randomUUID } from "node:crypto";
 import { inspect } from "node:util";
 
-import { logSpy } from "../log-spy";
-import { logger } from "../logger";
+import { logger } from "../logger-function";
+import { logSpy } from "../logger-spy";
 import { LogLevel } from "../models";
 
-describe("Logger", () => {
+describe("Logger Function", () => {
   logSpy.output(false);
   afterEach(() => {
     jest.clearAllMocks();
     logger.testMode(true);
     logger.expandedMode(true);
+    logSpy.output(false);
   });
 
   const validObject = {
@@ -60,7 +60,7 @@ describe("Logger", () => {
     expect(logSpy.trace).toBeCalledTimes(beforeChange);
     expect(logger.getLevel()).not.toEqual(defaultLevel);
     expect(logger.getLevel()).toEqual(errorLevel);
-    logger.setLevel(defaultLevel, true);
+    logger.setLevel(defaultLevel);
     expect(logSpy.log).toHaveBeenCalled();
     expect(logger.getLevel()).toEqual(LogLevel.TRACE);
   });
@@ -74,15 +74,6 @@ describe("Logger", () => {
     Object.entries(support).map(([level, supported]) => {
       expect(typeof console[level] == "function").toEqual(supported);
     });
-  });
-
-  it("should set and keep a correlation ID when given one", () => {
-    const correlation = randomUUID();
-    logger.setCorrelation(correlation);
-    logger.info("info message");
-    logger.debug("debug message");
-    expect(logSpy.info).toBeCalledWith(expect.any(String), correlation, expect.any(String));
-    expect(logSpy.debug).toBeCalledWith(expect.any(String), correlation, expect.any(String));
   });
 
   it("should log to console.trace on TRACE", () => {

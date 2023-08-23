@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { logger } from "./logger";
+import { logger } from "./logger-function";
 import { LogType } from "./models";
 
 logger.testMode(true);
@@ -15,15 +15,15 @@ const resetAllMocks = () => {
   LogType.forEach((level) => logSpy[level].mockReset());
 };
 
-const output = (on: boolean): void => {
-  if (!on)
+const output = (state: boolean): void => {
+  if (!state)
     LogType.forEach((level) => {
       logSpy[level].mockImplementation(() => jest.fn());
     });
-  if (on)
+  if (state)
     LogType.forEach((level) => {
       logSpy[level].mockRestore();
-      logSpy[level] = jest.spyOn(console, level != "trace" ? level : "debug");
+      logSpy[level] = jest.spyOn(console, level);
     });
 };
 
