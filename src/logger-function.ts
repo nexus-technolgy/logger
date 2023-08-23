@@ -1,4 +1,4 @@
-import { LOG_EXPANDED, LOG_LEVEL, LOG_BROWSER } from "./config";
+import { LOG_BROWSER, LOG_EXPANDED, LOG_LEVEL } from "./config";
 import { consoleHas, deserialize, logItems, prefix, selectLevel } from "./helpers";
 import { Deserializer, LogData, LogLevel, LogType } from "./models";
 

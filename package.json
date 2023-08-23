@@ -15,14 +15,15 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && npm run tsc",
+    "build": "rm -rf dist && tsc",
     "tsc": "tsc",
-    "verify": "tsc --noEmit",
+    "verify": "eslint './src/**/*.ts' && tsc --noEmit",
     "test": "LOG_LEVEL=trace jest --config ./jest.config.ts",
     "test:watch": "LOG_LEVEL=trace jest --config ./jest.config.ts --watch-all",
     "lint": "eslint './src/**/*.ts'",
     "lint:fix": "eslint './src/**/*.ts' --fix",
-    "lint-staged": "lint-staged ."
+    "lint-staged": "lint-staged .",
+    "publish": "npm run verify && npm run test && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
