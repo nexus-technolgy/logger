@@ -17,5 +17,5 @@
     "types": ["node", "jest"]
   },
   "include": ["src"],
-  "exclude": ["**/*.spec.*", "**/*.test.*", "**/tests/*", "**/*.mock.*", "**/mocks/*", "public"]
+  "exclude": ["**/*.spec.*", "**/*.test.*", "**/tests/*", "**/*.mock.*", "**/mocks/*"]
 }
