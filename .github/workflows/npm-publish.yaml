@@ -19,17 +19,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify and test code
-        run:
-          - npm run verify
-          - npm run test
+      - name: Verify code
+        run: npm run test
+
+      - name: Run tests
+        run: npm run test
 
       - name: Build package
         run: npm run build
 
+      - name: Set publisher
+        run: npm config set scope nexustech --global
+
       - name: Publish to npm
-        run:
-          - npm config set scope nexustech --global
-          - npm publish --access public
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
