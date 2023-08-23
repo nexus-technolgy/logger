@@ -36,7 +36,7 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.1",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/gitlab": "^9.5.0",
+    "@semantic-release/github": "^9.0.4",
     "@semantic-release/npm": "^10.0.5",
     "@swc/helpers": "^0.5.1",
     "@swc/jest": "^0.2.29",

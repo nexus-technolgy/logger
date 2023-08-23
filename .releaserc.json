@@ -1,6 +1,6 @@
 {
   "branches": [
-    "develop",
+    "main",
     {
       "name": "release/*"
     }
@@ -8,7 +8,7 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/gitlab",
+    "@semantic-release/github",
     "@semantic-release/npm",
     [
       "@semantic-release/git",
