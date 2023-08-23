@@ -1,4 +1,4 @@
-import { LOG_EXPANDED, LOG_LEVEL, LOG_SERVER_MODE, LOG_TEST_MODE } from "./config";
+import { LOG_BROWSER, LOG_EXPANDED, LOG_LEVEL, LOG_SERVER_MODE } from "./config";
 import { consoleHas, deserialize, logItems, logObject, prefix, selectLevel } from "./helpers";
 import { logger } from "./logger-function";
 import { Deserializer, LogData, LogLevel, LogType } from "./models";
@@ -7,7 +7,7 @@ export interface LoggerInitialization {
   correlation?: string;
   serverMode?: boolean;
   expandedMode?: boolean;
-  testingMode?: boolean;
+  browserMode?: boolean;
   logLimit?: number;
   deserializer?: Deserializer;
 }
@@ -16,17 +16,17 @@ export class Logger {
   private correlation: string | undefined;
   private server: boolean;
   private expanded: boolean;
-  private testing: boolean;
+  private browser: boolean;
   private logLimit: number;
   private deserializer: Deserializer;
   constructor(params?: LoggerInitialization) {
-    const { correlation, serverMode, expandedMode, testingMode, logLimit, deserializer } = params ?? {};
+    const { correlation, serverMode, expandedMode, browserMode, logLimit, deserializer } = params ?? {};
     this.correlation = correlation ?? undefined;
     this.server = serverMode ?? LOG_SERVER_MODE;
     this.expanded = expandedMode ?? LOG_EXPANDED;
-    this.testing = testingMode ?? LOG_TEST_MODE;
+    this.browser = browserMode ?? LOG_BROWSER;
     this.logLimit = logLimit ?? LogType.indexOf(LOG_LEVEL);
-    this.deserializer = deserializer ?? ((v: LogData) => deserialize(v, { expanded: this.expanded, testing: this.testing }));
+    this.deserializer = deserializer ?? ((v: LogData) => deserialize(v, { expanded: this.expanded, browser: this.browser }));
   }
 
   private log = (logLevel: LogLevel, ...data: LogData[]): void => {
@@ -53,7 +53,7 @@ export class Logger {
   consoleSupport = logger.consoleSupport;
   serverMode = (state: boolean) => (this.server = state);
   expandedMode = (state: boolean) => (this.expanded = state);
-  testMode = (state: boolean) => (this.testing = state);
+  browserMode = (state: boolean) => (this.browser = state);
   setCorrelation = (id: string) => (this.correlation = id);
   error = (...data: LogData[]): void => this.log(LogLevel.ERROR, ...data);
   warn = (...data: LogData[]): void => this.log(LogLevel.WARN, ...data);

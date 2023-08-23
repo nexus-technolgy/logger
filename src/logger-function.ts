@@ -1,12 +1,12 @@
-import { LOG_EXPANDED, LOG_LEVEL, LOG_TEST_MODE } from "./config";
+import { LOG_EXPANDED, LOG_LEVEL, LOG_BROWSER } from "./config";
 import { consoleHas, deserialize, logItems, prefix, selectLevel } from "./helpers";
 import { Deserializer, LogData, LogLevel, LogType } from "./models";
 
 let expanded = LOG_EXPANDED;
-let testing = LOG_TEST_MODE;
+let browser = LOG_BROWSER;
 let logLimit = LogType.indexOf(LOG_LEVEL);
 
-const deserializer: Deserializer = (v: LogData) => deserialize(v, { expanded, testing });
+const deserializer: Deserializer = (v: LogData) => deserialize(v, { expanded, browser });
 
 const log = (logLevel: LogLevel, limit: number, ...data: LogData[]): void => {
   const level = LogType.indexOf(logLevel);
@@ -34,7 +34,7 @@ const consoleSupport = (): Record<LogLevel, boolean> => {
 
 const expandedMode = (state: boolean) => (expanded = state);
 
-const testMode = (state: boolean) => (testing = state);
+const browserMode = (state: boolean) => (browser = state);
 
 export const logger = (function () {
   return {
@@ -42,7 +42,7 @@ export const logger = (function () {
     setLevel,
     consoleSupport,
     expandedMode,
-    testMode,
+    browserMode,
     error: (...data: LogData[]): void => log(LogLevel.ERROR, logLimit, ...data),
     warn: (...data: LogData[]): void => log(LogLevel.WARN, logLimit, ...data),
     info: (...data: LogData[]): void => log(LogLevel.INFO, logLimit, ...data),

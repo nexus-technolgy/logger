@@ -12,17 +12,17 @@ describe("deserialize", () => {
     expect(result).toEqual(testNumber);
   });
 
-  it("should return the object data as-is if testing and an object with keys", () => {
-    const result = deserialize(testData, { testing: true });
+  it("should return the object data as-is if browser and an object with keys", () => {
+    const result = deserialize(testData, { browser: true });
     expect(result).toEqual(testData);
   });
 
-  it("should return the input inspected if not expanded and not testing", () => {
+  it("should return the input inspected if not expanded and not browser", () => {
     const result = deserialize(testData);
     expect(result).toEqual(inspect(testData, false, null, true));
   });
 
-  it("should return an object input inspected if expanded and not testing", () => {
+  it("should return an object input inspected if expanded and not browser", () => {
     const result = deserialize(testData, { expanded: true });
     expect(result).toEqual(inspect(testData, false, null, true));
   });
@@ -32,13 +32,13 @@ describe("deserialize", () => {
     expect(result).toEqual(inspect(testData, false, null, true));
   });
 
-  it("should return the parsed data if expanded, a string, and testing", () => {
-    const result = deserialize(testString, { expanded: true, testing: true });
+  it("should return the parsed data if expanded, a string, and browser", () => {
+    const result = deserialize(testString, { expanded: true, browser: true });
     expect(result).toEqual(testData);
   });
 
-  it("should return the inspected data if not expanded but an object with keys and not testing", () => {
-    const result = deserialize(testData, { testing: false });
+  it("should return the inspected data if not expanded but an object with keys and not browser", () => {
+    const result = deserialize(testData, { browser: false });
     expect(result).toEqual(inspect(testData, false, null, true));
   });
 

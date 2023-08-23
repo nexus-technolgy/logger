@@ -3,7 +3,7 @@
 import { logger } from "./logger-function";
 import { LogType } from "./models";
 
-logger.testMode(true);
+logger.browserMode(true);
 
 const error = jest.spyOn(console, "error");
 const warn = jest.spyOn(console, "warn");

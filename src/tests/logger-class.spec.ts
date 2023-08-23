@@ -7,13 +7,13 @@ import { logSpy } from "../logger-spy";
 import { LogData, LogLevel } from "../models";
 
 const correlation = randomUUID();
-const deserializer = (v: LogData) => deserialize(v, { expanded: true, testing: true });
-const logger = new Logger({ correlation, serverMode: false, testingMode: true, expandedMode: true, logLimit: 5 });
+const deserializer = (v: LogData) => deserialize(v, { expanded: true, browser: true });
+const logger = new Logger({ correlation, serverMode: false, browserMode: true, expandedMode: true, logLimit: 5 });
 describe("Logger Class", () => {
   logSpy.output(false);
   afterEach(() => {
     jest.clearAllMocks();
-    logger.testMode(true);
+    logger.browserMode(true);
     logger.expandedMode(true);
     logger.serverMode(false);
     logSpy.output(false);
@@ -49,7 +49,7 @@ describe("Logger Class", () => {
   });
 
   it("should use INSPECT on objects when not in test mode", () => {
-    logger.testMode(false);
+    logger.browserMode(false);
     logger.trace(validJson);
     logger.trace(validObject);
     expect(logSpy.trace.mock.calls[0][2]).toEqual(inspect(validObject, false, null, true));
@@ -70,7 +70,7 @@ describe("Logger Class", () => {
   });
 
   it("should use INSPECT on objects when not in test mode", () => {
-    logger.testMode(false);
+    logger.browserMode(false);
     logger.trace(validJson);
     logger.trace(validObject);
     expect(logSpy.trace.mock.calls[0][2]).toEqual(inspect(validObject, false, null, true));

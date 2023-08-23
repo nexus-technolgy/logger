@@ -8,7 +8,7 @@ describe("Logger Function", () => {
   logSpy.output(false);
   afterEach(() => {
     jest.clearAllMocks();
-    logger.testMode(true);
+    logger.browserMode(true);
     logger.expandedMode(true);
     logSpy.output(false);
   });
@@ -37,7 +37,7 @@ describe("Logger Function", () => {
   });
 
   it("should use INSPECT on objects when not in test mode", () => {
-    logger.testMode(false);
+    logger.browserMode(false);
     logger.trace(validJson);
     logger.trace(validObject);
     expect(logSpy.trace.mock.calls[0][1]).toEqual(inspect(validObject, false, null, true));
