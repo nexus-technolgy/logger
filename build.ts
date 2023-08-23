@@ -6,9 +6,9 @@ const mapBuild = (source: string, format: BuildOptions["format"]) => {
   build({
     entryPoints: [`src/logger-${source}.ts`],
     bundle: true,
-    minify: true,
+    minify: false,
     sourcemap: true,
-    outfile: `dist/${source}/logger.min.${fileExt}`,
+    outfile: `dist/${source}/logger.${fileExt}`,
     platform: "node",
     format,
     target: "node16",

@@ -1,4 +1,4 @@
-import Logger from "./class/logger.min.js";
-import logger from "./function/logger.min.js";
+import Logger from "./class/logger.js";
+import logger from "./function/logger.js";
 
 export { Logger, logger };

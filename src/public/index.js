@@ -1,4 +1,4 @@
-var Logger = require("./class/logger.min.js");
-var logger = require("./function/logger.min.js");
+var Logger = require("./class/logger.js");
+var logger = require("./function/logger.js");
 
 module.exports = { Logger, logger };
