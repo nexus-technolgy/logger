@@ -23,7 +23,7 @@
     "lint": "eslint './src/**/*.ts'",
     "lint:fix": "eslint './src/**/*.ts' --fix",
     "lint-staged": "lint-staged .",
-    "publish": "npm run verify && npm run test && npm run build && npm publish"
+    "prepublish": "npm run verify && npm run test && npm run build"
   },
   "repository": {
     "type": "git",
