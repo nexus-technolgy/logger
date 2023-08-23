@@ -1,6 +1,6 @@
 import { build, BuildOptions } from "esbuild";
 
-const files = ["function", "class", "spy"];
+const files = ["function", "class"];
 const mapBuild = (source: string, format: BuildOptions["format"]) => {
   const fileExt = format == "esm" ? "mjs" : "js";
   build({
