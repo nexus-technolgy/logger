@@ -13,17 +13,17 @@ export interface LoggerInitialization {
 
 export class Logger {
   private browser: boolean = LOG_BROWSER;
-  private correlation: string | undefined;
   private server: boolean;
   private expanded: boolean;
   private logLimit: number;
+  private correlation: string | undefined;
   private expander: LogExpander;
   constructor(params?: LoggerInitialization) {
     const { correlation, serverMode, expandedMode, logLimit, expander } = params ?? {};
-    this.correlation = correlation ?? undefined;
     this.server = serverMode ?? LOG_SERVER_MODE;
     this.expanded = expandedMode ?? LOG_EXPANDED;
     this.logLimit = logLimit ?? LogType.indexOf(LOG_LEVEL);
+    this.correlation = correlation ?? undefined;
     this.expander =
       expander ?? ((v: LogData) => expand(v, { expanded: this.expanded, browser: this.browser, server: this.server }));
   }

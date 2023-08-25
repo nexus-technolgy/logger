@@ -66,18 +66,34 @@ logger.setCorrelation("123456")
 }
 ```
 
-##### Class constructor
+#### Class constructor
+
+The constructor paramaters are an initialization objec that supports the following options
 
 ```ts
 {
-  correlation?: string;    // can be set at construction, and modified using setCorrelation
-  serverMode?: boolean;    // can be set at construction, and modified using serverMode(true|false)
-  expandedMode?: boolean;  // can be set at construction, and modified using serverMode(true|false)
-  browserMode?: boolean;
-  logLimit?: number;
-  expander?: LogExpander;
+  correlation?: string;    // can be set at construction, and modified using .setCorrelation
+  serverMode?: boolean;    // can be set at construction, and modified using .serverMode(true|false)
+  expandedMode?: boolean;  // can be set at construction, and modified using .expandedMode(true|false)
+  logLimit?: number;       // can be set at construction, and modified using .setLimit(1-5, or LogLevel)
+  expander?: LogExpander;  // can be set at construction time only.
 }
 ```
+
+##### Log Expander
+
+The expander is the data serialiizer (not the log serializer) and can be any valid array function that follows
+a standard for `Array.map` function constraints, e.g.
+
+```js
+const expander = (value, index?, array?) => {
+  if (value && (typeof value == "object" || Array.isArray(value))) return JSON.stringify(value, null, 2);
+  return value;
+};
+```
+
+If the expander is replaced, the `expanded` and `server` flags are no longer relevant, thus `expandedMode` and
+`serverMode` are moot on custom expanders.
 
 ### Log Levels
 
@@ -88,12 +104,19 @@ Available log levels are
 ```
 
 And the output levels are set using the `setLevel` call. This supports either a Number (1-5), or a `LogLevel`.
+It also has a second `boolean` argument to control output of the "success" message. Setting this `false` will turn
+the message off, otherwise it is `true` by default.
 
 > NB: Logging cannot be set lower than `1`; `log` and `error` messages will always be output.
 
 ```ts
-logger.setLevel(LogLevel.INFO); // log all messages INFO and below (LOG, ERROR, and WARN)
+logger.setLevel(LogLevel.INFO, false); // log all messages INFO and below (LOG, ERROR, and WARN)
+
+// no output
+
 logger.setLevel(5); // log all messages
+
+// [  LOG] 01:26:50.301: logger: set to trace (5)
 ```
 
 By default, messages are limited INFO (3) unless the environment variable `LOG_LEVEL` is defined
@@ -101,6 +124,12 @@ By default, messages are limited INFO (3) unless the environment variable `LOG_L
 ```
 LOG_LEVEL=trace node my-script.js
 ```
+
+### Environment Variables
+
+`LOG_LEVEL` can be set to any of the valid log levels. Case is not important.
+`LOG_EXPANDED` can be set to `true` or `false`
+`LOG_MODE` can be set to `server` to default the `Logger` to server mode when constructed
 
 ### Replacement for console
 
