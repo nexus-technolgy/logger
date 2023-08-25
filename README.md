@@ -67,6 +67,20 @@ logger.setCorrelation("123456")
 }
 ```
 
+#### Class Constructor
+
+The constructor paramaters are an initialization object that support the following options;
+
+```ts
+{
+  correlation?: string;    // can modified using .setCorrelation
+  serverMode?: boolean;    // can modified using .serverMode(true|false)
+  expandedMode?: boolean;  // can modified using .expandedMode(true|false)
+  logLimit?: number;       // can modified using .setLimit(1-5, or LogLevel)
+  expander?: LogExpander;  // can be set at construction time only.
+}
+```
+
 #### Serialized Errors
 
 If a call is made to the `error` factory with an `Error` type object passed as an argument, the `serialize-error`
@@ -96,23 +110,9 @@ const logger = new Logger({ correlation: "123456", serverMode: true });
 }
 ```
 
-#### Class Constructor
-
-The constructor paramaters are an initialization object that support the following options;
-
-```ts
-{
-  correlation?: string;    // can modified using .setCorrelation
-  serverMode?: boolean;    // can modified using .serverMode(true|false)
-  expandedMode?: boolean;  // can modified using .expandedMode(true|false)
-  logLimit?: number;       // can modified using .setLimit(1-5, or LogLevel)
-  expander?: LogExpander;  // can be set at construction time only.
-}
-```
-
 ##### Log Expander
 
-The expander is the data serialiizer (not the log serializer) and can be any valid array function that follows
+The log expander is the data serialiizer (not the log serializer) and can be any valid array function that follows
 the expected standard for `Array.map` function constraints, e.g.
 
 ```js
@@ -126,6 +126,13 @@ const expander = (value, index?, array?) => {
 
 If the expander is replaced, the `expanded` and `server` flags may no longer be injected, thus `expandedMode` and
 `serverMode` are potentially moot on custom expanders, and therefore assumed to be always on (`true).
+
+the default expander will expand any JSON strings to JSON and should be adequate for most data serialization tasks.
+If you are logging a JSON string and specifically need to inspect the string, disable the expander using
+
+```ts
+logger.expandedMode(false);
+```
 
 ## Log Levels
 
