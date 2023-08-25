@@ -71,7 +71,7 @@ logger.setCorrelation("123456")
 
 If a call is made to the `error` factory with an `Error` type object passed as an argument, the `serialize-error`
 handler is invoked to return a JSON representation of the `Error`. For details on the handler, see the README at
-(serialize-error)[https://github.com/sindresorhus/serialize-error] on Github.
+[serialize-error](https://github.com/sindresorhus/serialize-error) on Github.
 
 ```ts
 import { Logger } from "@nexustech/logger";
