@@ -7,24 +7,22 @@ export interface LoggerInitialization {
   correlation?: string;
   serverMode?: boolean;
   expandedMode?: boolean;
-  browserMode?: boolean;
   logLimit?: number;
   expander?: LogExpander;
 }
 
 export class Logger {
+  private browser: boolean = LOG_BROWSER;
   private correlation: string | undefined;
   private server: boolean;
   private expanded: boolean;
-  private browser: boolean;
   private logLimit: number;
   private expander: LogExpander;
   constructor(params?: LoggerInitialization) {
-    const { correlation, serverMode, expandedMode, browserMode, logLimit, expander } = params ?? {};
+    const { correlation, serverMode, expandedMode, logLimit, expander } = params ?? {};
     this.correlation = correlation ?? undefined;
     this.server = serverMode ?? LOG_SERVER_MODE;
     this.expanded = expandedMode ?? LOG_EXPANDED;
-    this.browser = browserMode ?? LOG_BROWSER;
     this.logLimit = logLimit ?? LogType.indexOf(LOG_LEVEL);
     this.expander =
       expander ?? ((v: LogData) => expand(v, { expanded: this.expanded, browser: this.browser, server: this.server }));
@@ -54,7 +52,6 @@ export class Logger {
   consoleSupport = logger.consoleSupport;
   serverMode = (state: boolean) => (this.server = state);
   expandedMode = (state: boolean) => (this.expanded = state);
-  browserMode = (state: boolean) => (this.browser = state);
   setCorrelation = (id: string) => (this.correlation = id);
   log = (...data: LogData[]): void => this.call(LogLevel.LOG, ...data);
   error = (...data: LogData[]): void => this.call(LogLevel.ERROR, ...data);

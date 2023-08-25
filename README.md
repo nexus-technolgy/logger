@@ -31,13 +31,17 @@ try {
 
 Variables can also be wrapped in to an object so that output will be labelled and coloured using the Node `inspect` utility
 
+> NB: `inspect` is not used when `logger` is running in a browser, or when in server mode
+
 ```ts
 logger.error("An error occured", error.message, { a, b });
 
 // [ERROR] 23:19:51.452: An error occured myFunction is not defined { a: 1, b: 'foo' }
 ```
 
-Logger can also be implemented as a `class` that has more options available, such as setting a `correlation`
+### Logger Class
+
+Logger can be implemented as a `class` that has more options available, such as setting a `correlation`
 value to maintain a unique identity across microservices. The class can also have a custom expander injected
 at construction time, as well as logging in a standard object style using the `serverMode` flag
 
@@ -46,11 +50,14 @@ import { Logger } from "@nexustech/logger";
 
 const logger = new Logger({ serverMode: true });
 
+logger.setCorrelation("123456")
+
 {
   level: 1,
   severity: 'error',
   datetime: '2023-08-25T01:07:22.170Z',
   timestamp: 1692925642170,
+  correlation: '123456',
   data: [
     'An error occured',
     'myFunction is not defined',
@@ -59,6 +66,21 @@ const logger = new Logger({ serverMode: true });
 }
 ```
 
+##### Class constructor
+
+```ts
+{
+  correlation?: string;    // can be set at construction, and modified using setCorrelation
+  serverMode?: boolean;    // can be set at construction, and modified using serverMode(true|false)
+  expandedMode?: boolean;  // can be set at construction, and modified using serverMode(true|false)
+  browserMode?: boolean;
+  logLimit?: number;
+  expander?: LogExpander;
+}
+```
+
+### Log Levels
+
 Available log levels are
 
 ```ts
@@ -66,7 +88,8 @@ Available log levels are
 ```
 
 And the output levels are set using the `setLevel` call. This supports either a Number (1-5), or a `LogLevel`.
-** NB: ** Logging cannot be set lower than `1`; `log` and `error` messages will always be output.
+
+> NB: Logging cannot be set lower than `1`; `log` and `error` messages will always be output.
 
 ```ts
 logger.setLevel(LogLevel.INFO); // log all messages INFO and below (LOG, ERROR, and WARN)

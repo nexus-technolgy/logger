@@ -21,6 +21,8 @@ try {
 }
 
 logger.serverMode(true);
+logger.setCorrelation("123456");
+
 try {
   myFunction(a, b);
 } catch (error) {

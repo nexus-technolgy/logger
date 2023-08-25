@@ -8,12 +8,12 @@ import { LogData, LogLevel } from "../models";
 
 const correlation = randomUUID();
 const expander = (v: LogData) => expand(v, { expanded: true, browser: true });
-const logger = new Logger({ correlation, serverMode: false, browserMode: true, expandedMode: true, logLimit: 5 });
+const logger = new Logger({ correlation, serverMode: false, expandedMode: true, logLimit: 5 });
 describe("Logger Class", () => {
   logSpy.output(false);
   afterEach(() => {
     jest.clearAllMocks();
-    logger.browserMode(true);
+    logger["browser"] = true; // prevents `inspect` from running
     logger.expandedMode(true);
     logger.serverMode(false);
     logSpy.output(false);
@@ -48,8 +48,8 @@ describe("Logger Class", () => {
     expect(logSpy.info.mock.calls[0][0].data).toEqual([validObject]);
   });
 
-  it("should use INSPECT on objects when not in test mode", () => {
-    logger.browserMode(false);
+  it("should use INSPECT on objects when not in browser or server mode", () => {
+    logger["browser"] = false;
     logger.trace(validJson);
     logger.trace(validObject);
     expect(logSpy.trace.mock.calls[0][2]).toEqual(inspect(validObject, false, null, true));
@@ -69,8 +69,8 @@ describe("Logger Class", () => {
     expect(logSpy.trace.mock.calls[1][2]).toEqual(validObject);
   });
 
-  it("should use INSPECT on objects when not in test mode", () => {
-    logger.browserMode(false);
+  it("should use INSPECT on objects when not in browser or server mode", () => {
+    logger["browser"] = false;
     logger.trace(validJson);
     logger.trace(validObject);
     expect(logSpy.trace.mock.calls[0][2]).toEqual(inspect(validObject, false, null, true));
