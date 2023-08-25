@@ -23,12 +23,12 @@ describe("Logger Function", () => {
     if (!process.env.LOG_LEVEL) expect(logger.getLevel()).toEqual(LogLevel.TRACE);
   });
 
-  it("should deserialize a JSON string when logging", () => {
+  it("should expand a JSON string when logging", () => {
     logger.trace(validJson);
     expect(logSpy.trace.mock.calls[0][1]).toEqual(validObject);
   });
 
-  it("should not deserialize a JSON string if `expanded` is turned off", () => {
+  it("should not expand a JSON string if `expanded` is turned off", () => {
     logger.expandedMode(false);
     logger.trace(validJson);
     logger.trace(validObject);
@@ -133,5 +133,12 @@ describe("Logger Function", () => {
     logger.error("error message");
     expect(logSpy.error).toBeCalledTimes(1);
     expect(logSpy.error.mock.calls[0][0].startsWith("[ERROR]")).toBe(true);
+  });
+
+  it("should always log to console.log on LOG", () => {
+    logger.setLevel(LogLevel.LOG, false);
+    logger.log("log message");
+    expect(logSpy.log).toBeCalledTimes(1);
+    expect(logSpy.log.mock.calls[0][0].startsWith("[  LOG]")).toBe(true);
   });
 });

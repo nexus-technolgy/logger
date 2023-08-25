@@ -7,4 +7,4 @@ export enum LogLevel {
   LOG = "log",
 }
 
-export const LogType = [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];
+export const LogType = [LogLevel.LOG, LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE];

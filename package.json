@@ -16,7 +16,6 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "tsc": "tsc",
     "verify": "eslint './src/**/*.ts' && tsc --noEmit",
     "test": "LOG_LEVEL=trace jest --config ./jest.config.ts",
     "test:watch": "LOG_LEVEL=trace jest --config ./jest.config.ts --watch-all",

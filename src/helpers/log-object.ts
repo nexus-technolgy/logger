@@ -1,16 +1,20 @@
-import { Deserializer, LogData, LogObject, LogType } from "../models";
+import { LogData, LogExpander, LogObject, LogType } from "../models";
 
 export const logObject = (
-  deserializer: Deserializer,
-  logLevel: number,
+  expander: LogExpander,
+  level: number,
   correlation: string | null | undefined,
   ...logData: LogData[]
 ): LogObject => {
-  const level = logLevel + 1;
-  const data = logData.map(deserializer);
+  const data = logData.map(expander);
+  const now = new Date();
+  const datetime = now.toISOString();
+  const timestamp = now.valueOf();
   const log = {
     level,
-    severity: LogType[logLevel],
+    severity: LogType[level],
+    datetime,
+    timestamp,
     correlation,
     data,
   };

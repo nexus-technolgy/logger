@@ -1,18 +1,18 @@
 import { LOG_BROWSER, LOG_EXPANDED, LOG_LEVEL } from "./config";
-import { consoleHas, deserialize, logItems, prefix, selectLevel } from "./helpers";
-import { Deserializer, LogData, LogLevel, LogType } from "./models";
+import { consoleHas, expand, logItems, prefix, selectLevel } from "./helpers";
+import { LogData, LogExpander, LogLevel, LogType } from "./models";
 
 let expanded = LOG_EXPANDED;
 let browser = LOG_BROWSER;
 let logLimit = LogType.indexOf(LOG_LEVEL);
 
-const deserializer: Deserializer = (v: LogData) => deserialize(v, { expanded, browser });
+const expander: LogExpander = (v: LogData) => expand(v, { expanded, browser });
 
-const log = (logLevel: LogLevel, limit: number, ...data: LogData[]): void => {
+const call = (logLevel: LogLevel, limit: number, ...data: LogData[]): void => {
   const level = LogType.indexOf(logLevel);
   if (level <= limit) {
     const target = consoleHas[level] ? logLevel : LogLevel.LOG;
-    const items = logItems(deserializer, level, ...data);
+    const items = logItems(expander, level, ...data);
     console[target].apply(null, items);
   }
 };
@@ -20,7 +20,7 @@ const log = (logLevel: LogLevel, limit: number, ...data: LogData[]): void => {
 const setLevel = (setLevel: LogLevel | string | number, logChange = true): LogLevel => {
   const targetLevel = selectLevel(setLevel);
   logLimit = LogType.indexOf(targetLevel);
-  if (logChange) console.log(prefix(2), `logger: set to ${LogType[logLimit]}`);
+  if (logChange) console.log(prefix(0), `logger: set to ${LogType[logLimit]} (${logLimit})`);
   return targetLevel;
 };
 
@@ -43,10 +43,11 @@ export const logger = (function () {
     consoleSupport,
     expandedMode,
     browserMode,
-    error: (...data: LogData[]): void => log(LogLevel.ERROR, logLimit, ...data),
-    warn: (...data: LogData[]): void => log(LogLevel.WARN, logLimit, ...data),
-    info: (...data: LogData[]): void => log(LogLevel.INFO, logLimit, ...data),
-    debug: (...data: LogData[]): void => log(LogLevel.DEBUG, logLimit, ...data),
-    trace: (...data: LogData[]): void => log(LogLevel.TRACE, logLimit, ...data),
+    log: (...data: LogData[]): void => call(LogLevel.LOG, logLimit, ...data),
+    error: (...data: LogData[]): void => call(LogLevel.ERROR, logLimit, ...data),
+    warn: (...data: LogData[]): void => call(LogLevel.WARN, logLimit, ...data),
+    info: (...data: LogData[]): void => call(LogLevel.INFO, logLimit, ...data),
+    debug: (...data: LogData[]): void => call(LogLevel.DEBUG, logLimit, ...data),
+    trace: (...data: LogData[]): void => call(LogLevel.TRACE, logLimit, ...data),
   };
 })();

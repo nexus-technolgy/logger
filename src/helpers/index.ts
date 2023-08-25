@@ -1,4 +1,4 @@
-export * from "./log-deserialize";
+export * from "./log-expand";
 export * from "./log-items";
 export * from "./log-level";
 export * from "./log-object";

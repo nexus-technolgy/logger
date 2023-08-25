@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { inspect } from "node:util";
 
-import { deserialize } from "../helpers";
+import { expand } from "../helpers";
 import { Logger } from "../logger-class";
 import { logSpy } from "../logger-spy";
 import { LogData, LogLevel } from "../models";
 
 const correlation = randomUUID();
-const deserializer = (v: LogData) => deserialize(v, { expanded: true, browser: true });
+const expander = (v: LogData) => expand(v, { expanded: true, browser: true });
 const logger = new Logger({ correlation, serverMode: false, browserMode: true, expandedMode: true, logLimit: 5 });
 describe("Logger Class", () => {
   logSpy.output(false);
@@ -29,9 +29,9 @@ describe("Logger Class", () => {
     if (!process.env.LOG_LEVEL) expect(logger.getLevel()).toEqual(LogLevel.TRACE);
   });
 
-  it("should allow a custom deserializer to be injected", () => {
-    const server = new Logger({ deserializer });
-    expect(server["deserializer"]).toEqual(deserializer);
+  it("should allow a custom expander to be injected", () => {
+    const server = new Logger({ expander });
+    expect(server["expander"]).toEqual(expander);
   });
 
   it("should log structured objects when in server mode", () => {
@@ -56,12 +56,12 @@ describe("Logger Class", () => {
     expect(logSpy.trace.mock.calls[1][2]).toEqual(inspect(validObject, false, null, true));
   });
 
-  it("should deserialize a JSON string when logging", () => {
+  it("should expand a JSON string when logging", () => {
     logger.trace(validJson);
     expect(logSpy.trace.mock.calls[0][2]).toEqual(validObject);
   });
 
-  it("should not deserialize a JSON string if `expanded` is turned off", () => {
+  it("should not expand a JSON string if `expanded` is turned off", () => {
     logger.expandedMode(false);
     logger.trace(validJson);
     logger.trace(validObject);
@@ -175,5 +175,12 @@ describe("Logger Class", () => {
     logger.error("error message");
     expect(logSpy.error).toBeCalledTimes(1);
     expect(logSpy.error.mock.calls[0][0].startsWith("[ERROR]")).toBe(true);
+  });
+
+  it("should always log to console.log on LOG", () => {
+    logger.setLevel(LogLevel.LOG, false);
+    logger.log("log message");
+    expect(logSpy.log).toBeCalledTimes(1);
+    expect(logSpy.log.mock.calls[0][0].startsWith("[  LOG]")).toBe(true);
   });
 });
