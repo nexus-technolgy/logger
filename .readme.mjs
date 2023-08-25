@@ -28,3 +28,9 @@ try {
 } catch (error) {
   logger.error("An error occured", error.message, { a, b });
 }
+
+try {
+  myFunction(a, b);
+} catch (error) {
+  logger.error(error);
+}
