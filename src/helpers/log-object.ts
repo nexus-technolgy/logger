@@ -1,4 +1,5 @@
 import { LogData, LogExpander, LogObject, LogType } from "../models";
+import { serializeError } from "./serialize-error";
 
 export const logObject = (
   expander: LogExpander,
@@ -6,7 +7,7 @@ export const logObject = (
   correlation: string | null | undefined,
   ...logData: LogData[]
 ): LogObject => {
-  const data = logData.map(expander);
+  const data = level == 1 ? logData.map((v: unknown) => serializeError(v)) : logData.map(expander);
   const now = new Date();
   const datetime = now.toISOString();
   const timestamp = now.valueOf();

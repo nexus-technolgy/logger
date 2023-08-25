@@ -5,3 +5,4 @@ export * from "./log-object";
 export * from "./log-prefix";
 export * from "./log-support";
 export * from "./parse-data";
+export * from "./serialize-error";
