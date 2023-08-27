@@ -73,10 +73,10 @@ The constructor paramaters are an initialization object that support the followi
 
 ```ts
 {
-  correlation?: string;    // can modified using .setCorrelation
-  serverMode?: boolean;    // can modified using .serverMode(true|false)
-  expandedMode?: boolean;  // can modified using .expandedMode(true|false)
-  logLimit?: number;       // can modified using .setLimit(1-5, or LogLevel)
+  correlation?: string;    // can be modified using .setCorrelation
+  serverMode?: boolean;    // can be modified using .serverMode(true|false)
+  expandedMode?: boolean;  // can be modified using .expandedMode(true|false)
+  logLimit?: number;       // can be modified using .setLimit(1-5, or LogLevel)
   expander?: LogExpander;  // can be set at construction time only.
 }
 ```
@@ -112,7 +112,7 @@ const logger = new Logger({ correlation: "123456", serverMode: true });
 
 ##### Log Expander
 
-The log expander is the data serialiizer (not the log serializer) and can be any valid array function that follows
+The log expander is the data serializer (not the log serializer) and can be any valid array function that follows
 the expected standard for `Array.map` function constraints, e.g.
 
 ```js
@@ -125,7 +125,7 @@ const expander = (value, index?, array?) => {
 ```
 
 If the expander is replaced, the `expanded` and `server` flags may no longer be injected, thus `expandedMode` and
-`serverMode` are potentially moot on custom expanders, and therefore assumed to be always on (`true).
+`serverMode` are potentially moot on custom expanders, and therefore assumed to be always on (`true`).
 
 the default expander will expand any JSON strings to JSON and should be adequate for most data serialization tasks.
 If you are logging a JSON string and specifically need to inspect the string, disable the expander using
@@ -180,7 +180,7 @@ LOG_LEVEL=trace node my-script.js
 ### Replacement for `console`
 
 All logging events are called with the same factory functions defined in `console`. If the terminal where the `logger` is
-sending output to does not support the relevant factory, the outpur is redirected to the `log` factory.
+sending output to does not support the relevant factory, the output is redirected to the `log` factory.
 
 It should be possible to search and replace `/console(\.[a-z]{3,5})/` with `logger$1` across your project to implement
 `logger` everywhere there exists a `console.<level>` command, however this may need a global definition for `logger`, or
@@ -199,6 +199,68 @@ logger.trace({ a, b });
 ```
 
 ## Installation
+
+To use as a package in your project,
+
+```bash
+npm i @nexustech/logger
+```
+
+then in your project
+
+```ts
+import { logger } from "@nexustech/logger";
+```
+
+in the files that would output logs.
+
+It is often expected that a Logger Service (class) is passed as a dependency to child classes from a parent, such that those
+classes inherit things like the correlation from the logger instance
+
+#### Example: AWS Lambda function
+
+_handler_
+
+```ts
+import { Logger } from "@nexustech/logger";
+
+const logger = new Logger({ serverMode: true });
+
+export default handler = async function (event: APIGatewayProxyEvent) {
+  const correlation = getCorrelation(event); // possibly passed from previous microservice
+  logger.setCorrelation(correlation);
+  logger.debug("myHandler invoked", { event });
+  // event checks...
+
+  const payload = event.body;
+  // payload checks
+
+  const controller = new MyController(logger);
+  return controller.myFunction(payload);
+};
+```
+
+_controller_
+
+```ts
+export class MyController {
+  constructor(private logger = console) {
+    // ...
+  }
+
+  myFunction(payload: MyControllerPayload) {
+    this.logger.debug("MyController:myFunction invoked", { payload });
+    // ...
+  }
+}
+```
+
+In this configuration the Logger service can be passed down the chain and will maintain the correlation value, as well as
+allow for missing a missing dependency injection by replacing the logger with the standard console. (YMMV).
+
+More advance dependency injection patterns can be achieved with other modules that are specifically designed for the job.
+
+## Modification
 
 Clone the repo and use `npm` or `yarn` to pull dependencies.
 
