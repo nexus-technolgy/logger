@@ -1,7 +1,6 @@
-import { inspect } from "node:util";
-
 import { LogData } from "../models";
 import { parseData } from ".";
+import { logInspect } from "./log-inspect";
 
 type ExpandOptions = {
   expanded?: boolean;
@@ -19,10 +18,10 @@ type ExpandOptions = {
 export const expand = (data: LogData, params?: ExpandOptions): LogData => {
   const { expanded, browser, server } = params ?? {};
   if (data && typeof data == "string" && expanded) {
-    return browser || server ? parseData(data) : inspect(parseData(data), false, null, true);
+    return browser || server ? parseData(data) : logInspect(parseData(data));
   }
   if (!browser && !server && data && typeof data == "object" && Object.keys(data).length) {
-    return inspect(data, false, null, true);
+    return logInspect(data);
   }
   return data;
 };
