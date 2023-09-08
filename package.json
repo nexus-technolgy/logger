@@ -22,7 +22,7 @@
     "test:watch": "LOG_LEVEL=trace jest --config ./jest.config.ts --watch-all",
     "lint": "eslint './src/**/*.ts'",
     "lint:fix": "eslint './src/**/*.ts' --fix",
-    "prepublish": "npm run verify && npm run test && npm run build"
+    "prepare": "npm run verify && npm run test && npm run build"
   },
   "repository": {
     "type": "git",
