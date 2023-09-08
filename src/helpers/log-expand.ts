@@ -17,12 +17,12 @@ type ExpandOptions = {
  * @returns formatted data
  */
 export const expand = (data: LogData, params?: ExpandOptions): LogData => {
-  const { expanded, browser, server } = params ?? {};
+  const { expanded = false, browser = false, server = false } = params ?? {};
   if (data && typeof data == "string" && expanded) {
-    return browser || server ? parseData(data) : inspect(parseData(data), false, 10, true);
+    return browser ? parseData(data) : inspect(parseData(data), false, 10, !server);
   }
-  if (!browser && !server && data && typeof data == "object" && Object.keys(data).length) {
-    return inspect(data, false, 10, true);
+  if (!browser && data && typeof data == "object" && Object.keys(data).length) {
+    return inspect(data, false, 10, !server);
   }
   return data;
 };
