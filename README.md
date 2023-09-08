@@ -31,7 +31,7 @@ try {
 
 Variables can also be wrapped in to an object so that output will be labelled and coloured using the Node `inspect` utility
 
-> NB: `inspect` is not used when `logger` is running in a browser, or when in server mode
+> NB: `inspect` is not used when `logger` is running in a browser, and when in server mode color output is `false`
 
 ```ts
 logger.error("An error occured", error.message, { a, b });
