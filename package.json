@@ -12,6 +12,9 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc --emitDeclarationOnly && node esbuild.mjs && ./package.sh",
     "verify": "eslint './src/**/*.ts' && tsc --noEmit",
