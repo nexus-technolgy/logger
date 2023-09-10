@@ -6,7 +6,7 @@ import { Logger } from "../logger-class";
 import { logSpy } from "../logger-spy";
 import { LogData, LogLevel } from "../models";
 
-const correlation = randomUUID();
+const correlation = { id: randomUUID(), path: "/test/path" };
 const expander = (v: LogData) => expand(v, { expanded: true, browser: true });
 const logger = new Logger({ correlation, serverMode: false, expandedMode: true, logLimit: 5 });
 describe("Logger Class", () => {
@@ -32,6 +32,22 @@ describe("Logger Class", () => {
   it("should allow a custom expander to be injected", () => {
     const server = new Logger({ expander });
     expect(server["expander"]).toEqual(expander);
+  });
+
+  it("should allow an undefined correlation", () => {
+    const server = new Logger();
+    expect(server["correlation"]).toBeUndefined();
+  });
+
+  it("should allow an string correlation and set as ID", () => {
+    const id = randomUUID();
+    const server = new Logger({ correlation: id });
+    expect(server["correlation"]).toEqual({ id });
+  });
+
+  it("should allow an object correlation", () => {
+    const server = new Logger({ correlation });
+    expect(server["correlation"]).toEqual(correlation);
   });
 
   it("should log structured objects when in server mode", () => {
@@ -109,13 +125,23 @@ describe("Logger Class", () => {
     });
   });
 
-  it("should set and keep a correlation ID when given one", () => {
-    const correlation = randomUUID();
-    logger.setCorrelation(correlation);
+  it("should set and keep a new correlation ID when given one", () => {
+    const id = randomUUID();
+    logger.setCorrelation({ id });
     logger.info("info message");
     logger.debug("debug message");
-    expect(logSpy.info).toBeCalledWith(expect.any(String), correlation, expect.any(String));
-    expect(logSpy.debug).toBeCalledWith(expect.any(String), correlation, expect.any(String));
+    expect(logSpy.info).toBeCalledWith(expect.any(String), { ...correlation, id }, expect.any(String));
+    expect(logSpy.debug).toBeCalledWith(expect.any(String), { ...correlation, id }, expect.any(String));
+  });
+
+  it("should set and keep a correlation record when given one", () => {
+    const id = randomUUID();
+    const path = "/random/path";
+    logger.setCorrelation({ id, path });
+    logger.info("info message");
+    logger.debug("debug message");
+    expect(logSpy.info).toBeCalledWith(expect.any(String), { id, path }, expect.any(String));
+    expect(logSpy.debug).toBeCalledWith(expect.any(String), { id, path }, expect.any(String));
   });
 
   it("should log to console.trace on TRACE", () => {

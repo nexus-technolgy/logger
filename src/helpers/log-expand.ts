@@ -19,10 +19,10 @@ type ExpandOptions = {
 export const expand = (data: LogData, params?: ExpandOptions): LogData => {
   const { expanded = false, browser = false, server = false } = params ?? {};
   if (data && typeof data == "string" && expanded) {
-    return browser ? parseData(data) : inspect(parseData(data), false, 10, !server);
+    return browser ? parseData(data) : inspect(parseData(data), false, 5, !server);
   }
   if (!browser && data && typeof data == "object" && Object.keys(data).length) {
-    return inspect(data, false, 10, !server);
+    return inspect(data, false, 5, !server);
   }
   return data;
 };

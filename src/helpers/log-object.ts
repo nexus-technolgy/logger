@@ -4,7 +4,7 @@ import { serializeError } from "./serialize-error";
 export const logObject = (
   expander: LogExpander,
   level: number,
-  correlation: string | null | undefined,
+  correlation: Record<string, unknown> | null | undefined,
   ...logData: LogData[]
 ): LogObject => {
   const data = level == 1 ? logData.map((v: unknown) => serializeError(v)) : logData.map(expander);

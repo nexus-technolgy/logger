@@ -22,7 +22,7 @@ import { logger } from "./logger-function";
 import { LogData, LogExpander, LogLevel, LogType } from "./models";
 
 export interface LoggerInitialization {
-  correlation?: string;
+  correlation?: string | Record<string, unknown>;
   serverMode?: boolean;
   expandedMode?: boolean;
   logLimit?: number;
@@ -34,14 +34,14 @@ export class Logger {
   private server: boolean;
   private expanded: boolean;
   private logLimit: number;
-  private correlation: string | undefined;
+  private correlation: Record<string, unknown> | undefined;
   private expander: LogExpander;
   constructor(params?: LoggerInitialization) {
     const { correlation, serverMode, expandedMode, logLimit, expander } = params ?? {};
     this.server = serverMode ?? LOG_SERVER_MODE;
     this.expanded = expandedMode ?? LOG_EXPANDED;
     this.logLimit = logLimit ?? LogType.indexOf(LOG_LEVEL);
-    this.correlation = correlation ?? undefined;
+    this.correlation = typeof correlation == "string" ? { id: correlation } : correlation;
     this.expander =
       expander ?? ((v: LogData) => expand(v, { expanded: this.expanded, browser: this.browser, server: this.server }));
   }
@@ -70,7 +70,7 @@ export class Logger {
   consoleSupport = logger.consoleSupport;
   serverMode = (state: boolean) => (this.server = state);
   expandedMode = (state: boolean) => (this.expanded = state);
-  setCorrelation = (id: string) => (this.correlation = id);
+  setCorrelation = (values: Record<string, unknown>) => (this.correlation = { ...this.correlation, ...values });
   log = (...data: LogData[]): void => this.call(LogLevel.LOG, ...data);
   error = (...data: LogData[]): void => this.call(LogLevel.ERROR, ...data);
   warn = (...data: LogData[]): void => this.call(LogLevel.WARN, ...data);

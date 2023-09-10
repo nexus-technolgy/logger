@@ -6,7 +6,7 @@ describe("logObject", () => {
     const mockLogExpander = jest.fn((data) => data);
 
     const level = 3;
-    const correlation = "abc123";
+    const correlation = { id: "abc123" };
     const data = ["foo", 123, { key: "value" }];
 
     const result = logObject(mockLogExpander, level, correlation, ...data);
@@ -74,7 +74,7 @@ describe("logObject", () => {
     const mockLogExpander = jest.fn((data) => data);
 
     const level = 1;
-    const correlation = "123456";
+    const correlation = { id: "123456" };
     const error = new Error("Kaboom!");
     const data = [serializeError(error)];
 
