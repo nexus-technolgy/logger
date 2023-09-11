@@ -7,7 +7,7 @@ export const logObject = (
   correlation: Record<string, unknown> | null | undefined,
   ...logData: LogData[]
 ): LogObject => {
-  const data = level == 1 ? logData.map((v: unknown) => serializeError(v)) : logData.map(expander);
+  const message = level == 1 ? logData.map((v: unknown) => serializeError(v)) : logData.map(expander);
   const now = new Date();
   const datetime = now.toISOString();
   const timestamp = now.valueOf();
@@ -17,7 +17,7 @@ export const logObject = (
     datetime,
     timestamp,
     correlation,
-    data,
+    message,
   };
 
   if (correlation === undefined) delete log.correlation;
