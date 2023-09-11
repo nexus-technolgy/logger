@@ -57,11 +57,11 @@ describe("Logger Class", () => {
     expect(logSpy.debug.mock.calls[0][0].level).toEqual(4);
     expect(logSpy.debug.mock.calls[0][0].severity).toEqual(LogLevel.DEBUG);
     expect(logSpy.debug.mock.calls[0][0].correlation).toEqual(correlation);
-    expect(logSpy.debug.mock.calls[0][0].data).toEqual([validObject]);
+    expect(logSpy.debug.mock.calls[0][0].message).toEqual([validObject]);
     expect(logSpy.info.mock.calls[0][0].level).toEqual(3);
     expect(logSpy.info.mock.calls[0][0].severity).toEqual(LogLevel.INFO);
     expect(logSpy.info.mock.calls[0][0].correlation).toEqual(correlation);
-    expect(logSpy.info.mock.calls[0][0].data).toEqual([validObject]);
+    expect(logSpy.info.mock.calls[0][0].message).toEqual([validObject]);
   });
 
   it("should use INSPECT on objects when not in browser or server mode", () => {
