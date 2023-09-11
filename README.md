@@ -59,7 +59,7 @@ logger.setCorrelation("123456")
   datetime: '2023-08-25T01:07:22.170Z',
   timestamp: 1692925642170,
   correlation: '123456',
-  data: [
+  message: [
     'An error occured',
     'myFunction is not defined',
     { a: 1, b: 'foo' }
@@ -98,7 +98,7 @@ const logger = new Logger({ correlation: "123456", serverMode: true });
   datetime: '2023-08-25T13:09:06.863Z',
   timestamp: 1692968946863,
   correlation: '123456',
-  data: [
+  message: [
     {
       name: 'ReferenceError',
       message: 'myFunction is not defined',
