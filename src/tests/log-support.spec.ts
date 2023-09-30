@@ -3,6 +3,7 @@ import { LogLevel } from "../models";
 
 jest.mock("../helpers/log-support", () => ({
   consoleHas: jest.fn(() => [true, true, true, true, false]),
+  callbackHas: jest.fn(() => [true, true, true, true, false]),
 }));
 
 import { Logger } from "../logger-class";
