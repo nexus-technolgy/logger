@@ -23,7 +23,7 @@ class ESBuild {
       minify: true,
       bundle: true,
       external: ["browser-util-inspect"],
-      entryPoints: ["./src/logger-class.ts", "./src/logger-function.ts"],
+      entryPoints: ["./src/index.ts"],
       format: "esm",
       outdir: "dist/esm",
     });
@@ -45,7 +45,7 @@ class ESBuild {
       minify: true,
       bundle: true,
       external: ["browser-util-inspect"],
-      entryPoints: ["./src/logger-class.ts", "./src/logger-function.ts"],
+      entryPoints: ["./src/index.ts"],
       format: "cjs",
       outdir: "dist/cjs",
     });
