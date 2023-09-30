@@ -68,8 +68,9 @@ export class Logger {
         if (this.mode == ServerMode.GCP) {
           this.browser = true;
           this.callback.log(logObject(this.expander, level, this.correlation, ...data));
+        } else {
+          console[target].apply(null, [logObject(this.expander, level, this.correlation, ...data)]);
         }
-        console[target].apply(null, [logObject(this.expander, level, this.correlation, ...data)]);
       } else {
         const items = logItems(this.expander, level, ...data);
         if (this.correlation) items.splice(1, 0, this.correlation);
