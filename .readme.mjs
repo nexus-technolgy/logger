@@ -1,4 +1,4 @@
-import { Logger } from "./dist/logger-class.js";
+import { Logger } from "./dist/esm/logger-class.js";
 
 const logger = new Logger();
 

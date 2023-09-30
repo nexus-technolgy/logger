@@ -18,7 +18,7 @@
 
 import { LOG_BROWSER, LOG_EXPANDED, LOG_LEVEL, LOG_SERVER_MODE } from "./config";
 import { callbackHas, expand, logItems, logObject, prefix, selectLevel } from "./helpers";
-import { gcpSeverity, LogData, LogExpander, LogLevel, LogType, ServerMode } from "./models";
+import { LogData, LogExpander, LogLevel, LogType, ServerMode } from "./models";
 
 export const serverModes = [ServerMode.AWS, ServerMode.GCP, ServerMode.STD];
 
@@ -66,9 +66,8 @@ export class Logger {
       const target = callbackHas(this.callback)[level] ? logLevel : LogLevel.LOG;
       if (this.mode) {
         if (this.mode == ServerMode.GCP) {
-          const metadata = { severity: gcpSeverity[logLevel], resource: { type: "global" } };
-          const logData = logObject(this.expander, level, this.correlation, ...data);
-          this.callback.log({ metadata, logData });
+          this.browser = true;
+          this.callback.log(logObject(this.expander, level, this.correlation, ...data));
         }
         console[target].apply(null, [logObject(this.expander, level, this.correlation, ...data)]);
       } else {
@@ -95,7 +94,8 @@ export class Logger {
   };
   serverMode = (mode: ServerMode) => (this.mode = mode);
   expandedMode = (state: boolean) => (this.expanded = state);
-  setCorrelation = (values: Record<string, unknown>) => (this.correlation = { ...this.correlation, ...values });
+  setCorrelation = (values: Record<string, unknown> | string) =>
+    (this.correlation = typeof values == "string" ? { ...this.correlation, id: values } : { ...this.correlation, ...values });
   log = (...data: LogData[]): void => this.call(LogLevel.LOG, ...data);
   error = (...data: LogData[]): void => this.call(LogLevel.ERROR, ...data);
   warn = (...data: LogData[]): void => this.call(LogLevel.WARN, ...data);

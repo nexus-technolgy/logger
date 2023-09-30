@@ -4,18 +4,18 @@ import { inspect } from "node:util";
 import { expand } from "../helpers";
 import { Logger } from "../logger-class";
 import { logSpy } from "../logger-spy";
-import { LogData, LogLevel } from "../models";
+import { LogData, LogLevel, ServerMode } from "../models";
 
 const correlation = { id: randomUUID(), path: "/test/path" };
 const expander = (v: LogData) => expand(v, { expanded: true, browser: true });
-const logger = new Logger({ correlation, serverMode: false, expandedMode: true, logLimit: 5 });
+const logger = new Logger({ correlation, serverMode: ServerMode.OFF, expandedMode: true, logLimit: 5 });
 describe("Logger Class", () => {
   logSpy.output(false);
   afterEach(() => {
     jest.clearAllMocks();
     logger["browser"] = true; // prevents `inspect` from running
     logger.expandedMode(true);
-    logger.serverMode(false);
+    logger.serverMode(ServerMode.OFF);
     logSpy.output(false);
   });
 
@@ -50,8 +50,8 @@ describe("Logger Class", () => {
     expect(server["correlation"]).toEqual(correlation);
   });
 
-  it("should log structured objects when in server mode", () => {
-    logger.serverMode(true);
+  it("should log structured objects when in any server mode", () => {
+    logger.serverMode(ServerMode.STD);
     logger.debug(validJson);
     logger.info(validObject);
     expect(logSpy.debug.mock.calls[0][0].level).toEqual(4);
@@ -62,6 +62,30 @@ describe("Logger Class", () => {
     expect(logSpy.info.mock.calls[0][0].severity).toEqual(LogLevel.INFO);
     expect(logSpy.info.mock.calls[0][0].correlation).toEqual(correlation);
     expect(logSpy.info.mock.calls[0][0].message).toEqual([validObject]);
+  });
+
+  it("should send a structured object to the log method in GCP server mode for all calls", () => {
+    logger.serverMode(ServerMode.GCP);
+    logger.debug(validJson);
+    logger.info(validObject);
+    expect(logSpy.log.mock.calls[0][0].level).toEqual(4);
+    expect(logSpy.log.mock.calls[0][0].severity).toEqual(LogLevel.DEBUG);
+    expect(logSpy.log.mock.calls[0][0].correlation).toEqual(correlation);
+    expect(logSpy.log.mock.calls[0][0].message).toEqual([validObject]);
+    expect(logSpy.log.mock.calls[1][0].level).toEqual(3);
+    expect(logSpy.log.mock.calls[1][0].severity).toEqual(LogLevel.INFO);
+    expect(logSpy.log.mock.calls[1][0].correlation).toEqual(correlation);
+    expect(logSpy.log.mock.calls[1][0].message).toEqual([validObject]);
+  });
+
+  it("should send a structured object to the callback in GCP server mode", () => {
+    const gcpSpy = jest.fn();
+    const gcplogger = new Logger({ correlation, serverMode: ServerMode.GCP, serverCall: gcpSpy });
+    gcplogger.debug(validJson);
+    expect(gcpSpy.mock.calls[0][0].level).toEqual(4);
+    expect(gcpSpy.mock.calls[0][0].severity).toEqual(LogLevel.DEBUG);
+    expect(gcpSpy.mock.calls[0][0].correlation).toEqual(correlation);
+    expect(gcpSpy.mock.calls[0][0].message).toEqual([validObject]);
   });
 
   it("should use INSPECT on objects when not in browser or server mode", () => {
@@ -127,7 +151,7 @@ describe("Logger Class", () => {
 
   it("should set and keep a new correlation ID when given one", () => {
     const id = randomUUID();
-    logger.setCorrelation({ id });
+    logger.setCorrelation(id);
     logger.info("info message");
     logger.debug("debug message");
     expect(logSpy.info).toBeCalledWith(expect.any(String), { ...correlation, id }, expect.any(String));

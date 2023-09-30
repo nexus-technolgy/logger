@@ -47,9 +47,9 @@ value to maintain a unique identity across microservices. The class can also hav
 (at construction), as well as logging in a standard object style using the `serverMode` flag or setting.
 
 ```ts
-import { Logger } from "@nexustech/logger";
+import { Logger, ServerMode } from "@nexustech/logger";
 
-const logger = new Logger({ serverMode: true });
+const logger = new Logger({ serverMode: ServerMode.STD });
 
 logger.setCorrelation("123456")
 
@@ -58,7 +58,7 @@ logger.setCorrelation("123456")
   severity: 'error',
   datetime: '2023-08-25T01:07:22.170Z',
   timestamp: 1692925642170,
-  correlation: '123456',
+  correlation: { id: '123456' },
   message: [
     'An error occured',
     'myFunction is not defined',
@@ -73,11 +73,12 @@ The constructor paramaters are an initialization object that support the followi
 
 ```ts
 {
-  correlation?: string;    // can be modified using .setCorrelation
-  serverMode?: boolean;    // can be modified using .serverMode(true|false)
-  expandedMode?: boolean;  // can be modified using .expandedMode(true|false)
-  logLimit?: number;       // can be modified using .setLimit(1-5, or LogLevel)
-  expander?: LogExpander;  // can be set at construction time only.
+  correlation?: string;     // can be modified using .setCorrelation
+  serverMode?: ServerMode;  // can be modified using .serverMode(ServerMode.AWS|GCP|STD|OFF)
+  serverCall?: Function     // can be set at construction time only. Will receive the structured object as an argument.
+  expandedMode?: boolean;   // can be modified using .expandedMode(true|false)
+  logLimit?: number;        // can be modified using .setLimit(1-5, or LogLevel)
+  expander?: LogExpander;   // can be set at construction time only.
 }
 ```
 
@@ -90,14 +91,14 @@ handler is invoked to return a JSON representation of the `Error`. For details o
 ```ts
 import { Logger } from "@nexustech/logger";
 
-const logger = new Logger({ correlation: "123456", serverMode: true });
+const logger = new Logger({ correlation: "123456", serverMode: "STD" });
 
 {
   level: 1,
   severity: 'error',
   datetime: '2023-08-25T13:09:06.863Z',
   timestamp: 1692968946863,
-  correlation: '123456',
+  correlation: { id: '123456' },
   message: [
     {
       name: 'ReferenceError',
@@ -175,7 +176,10 @@ LOG_LEVEL=trace node my-script.js
 
 `LOG_EXPANDED` can be set to `true` or `false`
 
-`LOG_MODE` can be set to `server` to default the `Logger` class to server mode when constructed
+`LOG_MODE` can be set to `AWS`, `GCP`, or `STD` to default the `Logger` class to server mode when constructed, using specific
+output formats that appear in cloud logging services, or to `STDOUT` (via `console`) when set to `STD`
+
+`LOG_DEPTH` can be set to expand objects to a set depth. The default setting is 6 levels deep in expanded objects.
 
 ### Replacement for `console`
 
@@ -185,6 +189,8 @@ sending output to does not support the relevant factory, the output is redirecte
 It should be possible to search and replace `/console(\.[a-z]{3,5})/` with `logger$1` across your project to implement
 `logger` everywhere there exists a `console.<level>` command, however this may need a global definition for `logger`, or
 an import in every file, depending on your project.
+
+_NB:_ Logger does not support the `table` and `dir` console functions
 
 ```ts
 console.log("🚀 Launch message in the code");
@@ -224,7 +230,7 @@ _handler_
 ```ts
 import { Logger } from "@nexustech/logger";
 
-const logger = new Logger({ serverMode: true });
+const logger = new Logger({ serverMode: "AWS" });
 
 export default handler = async function (event: APIGatewayProxyEvent) {
   const correlation = getCorrelation(event); // possibly passed from previous microservice
